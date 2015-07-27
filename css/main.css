@@ -1,3 +1,11 @@
+html::before {
+ 			background: url(images/alfred.jpg) top left no-repeat;
+ 			background-size: cover;
+ 			content: "";
+ 			height: 15rem;
+ 			overflow: hidden;
+ 			display: block;
+ 		}
 body {
     margin: 60px auto;
     width: 70%;
