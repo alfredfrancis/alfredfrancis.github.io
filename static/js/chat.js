@@ -20,7 +20,7 @@ $(document).ready(function () {
         $(".payloadPreview")[0].innerHTML = JSON.stringify(bot_say, null,5);
         payload  = bot_say;
         html_data = '<li class="left clearfix"><div class="chat-body clearfix"><strong>Iky</strong><p>' + bot_say["speechResponse"] + '</p> </div></li>';
-        $("ul.chat").append(html_data);
+        $(".chat ul").append(html_data);
         scrollToBottom();
     };
 
@@ -48,7 +48,7 @@ $(document).ready(function () {
             userQuery = $("#btn-input").val();
             $("#btn-input").val("");
             html_data = '<li class="right clearfix"><div class="chat-body"><strong>you</strong><p>' + userQuery + '</p> </div></li>';
-            $("ul.chat").append(html_data);
+            $(".chat ul").append(html_data);
             send_req(userQuery);
 
         }
