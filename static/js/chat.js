@@ -12,7 +12,7 @@ $(document).ready(function () {
         "missingParameters": []
     }
     function scrollToBottom() {
-        $(".chat")[0].scrollTop = $(".chat")[0].scrollHeight;
+        $(".chat ul")[0].scrollTop = $(".chat")[0].scrollHeight;
     }
 
     var put_text = function (bot_say) {
