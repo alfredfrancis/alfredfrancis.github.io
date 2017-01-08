@@ -32,6 +32,7 @@ $(document).ready(function () {
         dataType: 'json',
         success: function(data) {
             put_text(data);
+            $("#btn-input").focus();
         }
         });
         return true;
