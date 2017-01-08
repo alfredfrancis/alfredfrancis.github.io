@@ -48,6 +48,7 @@ $(document).ready(function () {
             html_data = '<li class="right clearfix"><div class="chat-body"><strong>you</strong><p>' + userQuery + '</p> </div></li>';
             $(".chat ul").append(html_data);
             send_req(userQuery);
+            scrollToBottom();
 
         }
     })
