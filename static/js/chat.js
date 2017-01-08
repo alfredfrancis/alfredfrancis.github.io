@@ -1,70 +1,56 @@
-/**
- * Created by alfred on 26/12/16.
- */
+$(document).ready(function () {
 
-
-class Chat extends React.Component {
-    constructor() {
-        super();
-        this.state = {parameters:[]}
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+    payload = {
+        "currentNode": "",
+        "complete": null,
+        "parameters": [
+        ],
+        "extractedParameters": {},
+        "speechResponse": "",
+        "intent": {},
+        "input": "init_conversation",
+        "missingParameters": []
+    }
+    function scrollToBottom() {
+        $(".chat")[0].scrollTop = $(".chat")[0].scrollHeight;
     }
 
-  loadDataFromServer() {
-    $.ajax({
-      url: '/stories/'+this.props.storyId,
-      dataType: 'json',
-      success: (data) => {
-        this.setState(data);
-      }
-    });
-  }
+    var put_text = function (bot_say) {
+        console.log(bot_say);
+        $(".payloadPreview")[0].innerHTML = JSON.stringify(bot_say, null,5);
+        payload  = bot_say;
+        html_data = '<li class="left clearfix"><div class="chat-body clearfix"><strong>Iky</strong><p>' + bot_say["speechResponse"] + '</p> </div></li>';
+        $("ul.chat").append(html_data);
+        scrollToBottom();
+    };
 
-  componentWillMount() {
-  }
-
-    handleChange(event) {
-        var nextState = {}
-        nextState[event.target.id] = event.target.value
-        this.setState(nextState)
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();
+    var send_req = function (userQuery) {
+        payload["input"] = userQuery;
         $.ajax({
-            url: '/stories/'+this.props.storyId,
-            type: 'PUT',
-            data: JSON.stringify(this.state),
-            contentType: 'application/json; charset=utf-8',
-            success: function() {
-                  alert("Story updated sucessfully")
-            }
-        });
-    }
+        url: 'http://swarm3353.cloudout.co/api/v1',
+        type: 'POST',
+        data: JSON.stringify(payload),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(data) {
+            put_text(data);
 
-    onUpdate(index,data){
-        var nextState = this.state
-        nextState.parameters[index] = data
-        this.setState(nextState)
-    }
-    render() {
-        return (
-                    <div className="chat-window">
-                      <div className="inner" id="inner">
-                        <div className="content" id="content"></div>
-                      </div>
-                      <div className="bottom" id="bottom">
-                        <input id="user-input" type="text" className="form-control input-sm"
-                           placeholder="Ask something.."/>
-                      </div>
-                    </div>
-        );
-    }
-}
-;
-//
-// ReactDOM.render(
-//     <Chat/>,
-//     document.getElementById('app')
-// );
+        }
+        });
+        return true;
+    };
+
+    send_req("init_conversation");
+
+
+    $('#btn-input').keydown(function (e) {
+        if (e.keyCode == 13) {
+            userQuery = $("#btn-input").val();
+            $("#btn-input").val("");
+            html_data = '<li class="right clearfix"><div class="chat-body"><strong>you</strong><p>' + userQuery + '</p> </div></li>';
+            $("ul.chat").append(html_data);
+            send_req(userQuery);
+
+        }
+    })
+});
