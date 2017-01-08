@@ -32,7 +32,6 @@ $(document).ready(function () {
         dataType: 'json',
         success: function(data) {
             put_text(data);
-
         }
         });
         return true;
@@ -47,9 +46,8 @@ $(document).ready(function () {
             $("#btn-input").val("");
             html_data = '<li class="right clearfix"><div class="chat-body"><strong>you</strong><p>' + userQuery + '</p> </div></li>';
             $(".chat ul").append(html_data);
-            send_req(userQuery);
             scrollToBottom();
-
+            send_req(userQuery);
         }
     })
 });
