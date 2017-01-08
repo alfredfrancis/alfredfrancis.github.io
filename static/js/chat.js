@@ -20,14 +20,14 @@ $(document).ready(function () {
         $(".payloadPreview")[0].innerHTML = JSON.stringify(bot_say, null,5);
         payload  = bot_say;
         html_data = '<li class="left clearfix"><div class="chat-body clearfix"><strong>Iky</strong><p>' + bot_say["speechResponse"] + '</p> </div></li>';
-        $(".chat ul")[0].append(html_data);
+        $(".chat ul").append(html_data);
         scrollToBottom();
     };
 
     var send_req = function (userQuery) {
         payload["input"] = userQuery;
         $.ajax({
-        url: 'http://swarm3353.cloudout.co/api/v1',
+        url: 'http://89.33.207.202/api/v1',
         type: 'POST',
         data: JSON.stringify(payload),
         contentType: 'application/json; charset=utf-8',
@@ -43,12 +43,12 @@ $(document).ready(function () {
     send_req("init_conversation");
 
 
-    $('#btn-input')[0].keydown(function (e) {
+    $('#btn-input').keydown(function (e) {
         if (e.keyCode == 13) {
-            userQuery = $("#btn-input")[0].val();
+            userQuery = $("#btn-input").val();
             $("#btn-input").val("");
             html_data = '<li class="right clearfix"><div class="chat-body"><strong>you</strong><p>' + userQuery + '</p> </div></li>';
-            $(".chat ul")[0].append(html_data);
+            $(".chat ul").append(html_data);
             send_req(userQuery);
 
         }
