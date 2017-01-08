@@ -43,7 +43,7 @@ $(document).ready(function () {
     send_req("init_conversation");
 
 
-    $('#btn-input').keydown(function (e) {
+    $('#btn-input')[0].keydown(function (e) {
         if (e.keyCode == 13) {
             userQuery = $("#btn-input")[0].val();
             $("#btn-input").val("");
