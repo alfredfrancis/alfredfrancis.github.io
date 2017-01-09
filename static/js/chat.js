@@ -59,6 +59,7 @@ $(document).ready(function () {
                 $(".slide3").show('slide');
                 $(".chat").show( "slow" );
                 $( ".user-input-area").show("slow");
+                $("#btn-input").focus();
               });
             },3000);
 
