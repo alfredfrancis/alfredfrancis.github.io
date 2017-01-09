@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+     $( ".chat").hide();
+     $( ".user-input-area").hide();
     payload = {
         "currentNode": "",
         "complete": null,
@@ -14,6 +16,17 @@ $(document).ready(function () {
     function scrollToBottom() {
         $(".chat ul")[0].scrollTop = $(".chat ul")[0].scrollHeight;
     }
+
+    $(".chat-heading").click(function() {
+        if ( $(".chat").is( ":hidden" ) ) 
+        {
+          $(".chat").show( "medium" );
+          $( ".user-input-area").show("medium");
+        } else {
+          $(".chat").slideUp();
+          $( ".user-input-area").slideUp();
+        }
+  });
 
     var put_text = function (bot_say) {
         payload  = bot_say;
@@ -37,6 +50,21 @@ $(document).ready(function () {
         });
         return true;
     };
+
+    setTimeout(function(){
+          $(".slide1").hide('slide',{direction: 'left'}, 400,function(){
+            $(".slide2").show('slide');
+            setTimeout(function(){
+              $(".slide2").hide('slide',{direction: 'left'}, 400,function(){
+                $(".slide3").show('slide');
+                $(".chat").show( "slow" );
+                $( ".user-input-area").show("slow");
+              });
+            },3000);
+
+          });
+        
+   }, 3000);
 
     send_req("init_conversation");
 
