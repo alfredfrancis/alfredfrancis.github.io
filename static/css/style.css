@@ -29,18 +29,16 @@ html,body{
 .chat-area .user-input-area{
        padding:20px;
 }
-.chat ul
+.chat
 {
     padding: 10px;
-    height: 300px;
-    overflow-y: scroll;
 }
 
 .chat ul
 {
     list-style: none;
     margin: 0;
-
+    height: 300px;
     overflow-y: scroll;
 }
 .chat li

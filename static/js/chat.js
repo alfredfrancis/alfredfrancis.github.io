@@ -12,12 +12,12 @@ $(document).ready(function () {
         "missingParameters": []
     }
     function scrollToBottom() {
-        $(".chat ul")[0].scrollTop = $(".chat")[0].scrollHeight;
+        $(".chat ul")[0].scrollTop = $(".chat ul")[0].scrollHeight;
     }
 
     var put_text = function (bot_say) {
         payload  = bot_say;
-        html_data = '<li class="left clearfix"><div class="chat-body clearfix"><strong>Iky</strong><p>' + bot_say["speechResponse"] + '</p> </div></li>';
+        html_data = '<li class="left clearfix"><div class="chat-body clearfix"><strong>Jarvis</strong><p>' + bot_say["speechResponse"] + '</p> </div></li>';
         $(".chat ul").append(html_data);
         scrollToBottom();
     };
