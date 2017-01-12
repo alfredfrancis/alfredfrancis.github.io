@@ -1,3 +1,7 @@
+window.onload = function(){  
+    document.getElementById('ftnt_topbar_script').setAttribute("async", "");
+}
+
 $(document).ready(function () {
 
      $( ".chat").hide();
