@@ -1,6 +1,15 @@
 html,body{
     height: 90%;
 }
+a:hover{
+    text-decoration: underline;
+}
+.typing{
+    font-color:gray;
+    display: none;
+    font-style: italic;
+    margin-left: 6px;
+}
 .nav-wrapper {
     background-color: #fff;
 }
@@ -18,8 +27,8 @@ html,body{
     color:#757575;
 }
 .chat-area{
+    display: none;
     background-color: #fff;
-    z-index: 999;
     border-radius: 5px;
     width: 300px;
     right:0;
@@ -38,6 +47,7 @@ html,body{
 }
 .chat
 {
+    display: none;
     padding: 10px;
 }
 
@@ -73,23 +83,27 @@ html,body{
     color: #777777;
 }
 .chat-area .user-input-area{
+    display: none;
     padding: 10px;
-    margin-top: 10px;
+    padding-top: 0px;
 }
 
 ::-webkit-scrollbar-track
 {
+    display: none;
     background-color: #dedede;
 }
 
 ::-webkit-scrollbar
 {
+    display: none;
     width: 3px;
     background-color: #F5F5F5;
 }
 
 ::-webkit-scrollbar-thumb
 {
+    display: none;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #555;
 }

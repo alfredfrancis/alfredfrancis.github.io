@@ -1,11 +1,7 @@
-window.onload = function(){  
-    document.getElementById('ftnt_topbar_script').setAttribute("async", "");
-}
-
 $(document).ready(function () {
 
-     $( ".chat").hide();
-     $( ".user-input-area").hide();
+     // $( ".chat").hide();
+     // $( ".user-input-area").hide();
     payload = {
         "currentNode": "",
         "complete": null,
@@ -26,6 +22,7 @@ $(document).ready(function () {
         {
           $(".chat").show( "medium" );
           $( ".user-input-area").show("medium");
+          $("#btn-input").focus();
         } else {
           $(".chat").slideUp();
           $( ".user-input-area").slideUp();
@@ -45,25 +42,38 @@ $(document).ready(function () {
         url: 'http://89.33.207.202/api/v1',
         type: 'POST',
         data: JSON.stringify(payload),
+        beforeSend: function() {
+                $('.typing').show();
+        },
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         success: function(data) {
+            $('.typing').hide();
             put_text(data);
             $("#btn-input").focus();
+        },
+        error:function(data){
+                    $('.typing').hide();
+                    html_data = '<li class="left clearfix"><div class="chat-body clearfix"><strong>Jarvis</strong><p>Hmm.Something went wrong.</p> </div></li>';
+                    $(".chat ul").append(html_data);
+                    scrollToBottom();
+
         }
         });
         return true;
     };
 
     setTimeout(function(){
-          $(".slide1").hide('slide',{direction: 'left'}, 400,function(){
+          $(".slide1").hide('slide',{direction: 'left'}, 700,function(){
             $(".slide2").show('slide');
             setTimeout(function(){
-              $(".slide2").hide('slide',{direction: 'left'}, 400,function(){
+              $(".slide2").hide('slide',{direction: 'left'}, 700,function(){
                 $(".slide3").show('slide');
-                $(".chat").show( "slow" );
-                $( ".user-input-area").show("slow");
-                $("#btn-input").focus();
+                $(".chat-area").show(function(){
+                    $(".chat").show("fast");
+                    $( ".user-input-area").show("fast");
+                    $("#btn-input").focus();
+                });
               });
             },3000);
 
