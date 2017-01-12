@@ -18,6 +18,8 @@ html,body{
     color:#757575;
 }
 .chat-area{
+    background-color: #fff;
+    z-index: 999;
     border-radius: 5px;
     width: 300px;
     right:0;
