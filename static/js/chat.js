@@ -39,7 +39,7 @@ $(document).ready(function () {
     var send_req = function (userQuery) {
         payload["input"] = userQuery;
         $.ajax({
-        url: 'http://89.33.207.202/api/v1',
+        url: 'https://iky-ai.herokuapp.com/api/v1',
         type: 'POST',
         data: JSON.stringify(payload),
         beforeSend: function() {
