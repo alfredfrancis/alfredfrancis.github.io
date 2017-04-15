@@ -5,6 +5,7 @@ $(document).ready(function () {
     payload = {
         "currentNode": "",
         "complete": null,
+         "context":{},
         "parameters": [
         ],
         "extractedParameters": {},
