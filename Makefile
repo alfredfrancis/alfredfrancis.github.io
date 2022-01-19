@@ -8,6 +8,6 @@ stop: ## Stop docker containers
 	docker-compose stop
 
 rebuild:
-	docker exec -it alfredfrancisgithubio_jekyll_1 jekyll build
+	docker-compose exec jekyll jekyll build --incremental --watch
 
 # ref - https://kleinfelter.com/moving-jekyll-to-docker

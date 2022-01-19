@@ -21,7 +21,7 @@ footer-links:
   email:
   facebook:
   flickr:
-  github: alfredfrancis/alfredfrancis.github.io
+  github: alfredfrancis
   instagram:
   linkedin:
   pinterest:
@@ -86,11 +86,11 @@ exclude:
   - README.md
   - CNAME
 
-jekyll_admin:
-  hidden_links:
-    - posts
-    - pages
-    - staticfiles
-    - datafiles
-    - configuration
-  homepage: "pages"
+# jekyll_admin:
+#   hidden_links:
+#     - posts
+#     - pages
+#     - staticfiles
+#     - datafiles
+#     - configuration
+#   homepage: "pages"
