@@ -44,11 +44,16 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-h1 {
+.h1, h1 {
   font-size: 30px;
   a {
     color: inherit;
   }
+}
+
+.post-meta {
+  font-size: 14px;
+  color: #828282;
 }
 
 h2 {
@@ -212,7 +217,7 @@ img {
 
 nav {
   float: right;
-  margin-top: 23px; // @TODO: Vertically middle align
+  margin-top: 10px; // @TODO: Vertically middle align
   font-family: $helveticaNeue;
   font-size: 18px;
 
