@@ -1,5 +1,7 @@
 ---
 title: Easily manage your Jekyll sites using docker-compose and jekyll-admin
+tags:
+- jekyll
 ---
 
 Eventhough Jekyll is the simplest blog-aware, static site generator out there, it's not easy to run it locally. You need to install the correct ruby version and all these other plugins.  I with the help of some coolest bloggers, came up with a docker-compose based solution this problem. I belive it'll make blogging with Jekyll easy and portable.
