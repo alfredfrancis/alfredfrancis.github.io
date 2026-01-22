@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Understanding Agentic AI - Interactive Tutorial</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Space Grotesk', sans-serif; }
+    code, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    @keyframes flowRight {
+      0% { transform: translateX(-5px); opacity: 0.3; }
+      50% { transform: translateX(5px); opacity: 1; }
+      100% { transform: translateX(-5px); opacity: 0.3; }
+    }
+    @keyframes flowDown {
+      0% { transform: translateY(-5px); opacity: 0.3; }
+      50% { transform: translateY(5px); opacity: 1; }
+      100% { transform: translateY(-5px); opacity: 0.3; }
+    }
+    @keyframes flowUp {
+      0% { transform: translateY(5px); opacity: 0.3; }
+      50% { transform: translateY(-5px); opacity: 1; }
+      100% { transform: translateY(5px); opacity: 0.3; }
+    }
+    .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
+    .animate-pulse-slow { animation: pulse 2s ease-in-out infinite; }
+    .flow-right { animation: flowRight 1.5s ease-in-out infinite; }
+    .flow-down { animation: flowDown 1.5s ease-in-out infinite; }
+    .flow-up { animation: flowUp 1.5s ease-in-out infinite; }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            stone: {
+              950: '#0c0a09',
+              900: '#1c1917',
+              800: '#292524',
+              700: '#44403c',
+              600: '#57534e',
+              500: '#78716c',
+              400: '#a8a29e',
+              300: '#d6d3d1',
+              200: '#e7e5e4',
+              100: '#f5f5f4',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-stone-950">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Icons as simple SVG components
+    const ChevronRight = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m9 18 6-6-6-6"/>
+      </svg>
+    );
+
+    const ChevronLeft = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+    );
+
+    const Bot = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>
+      </svg>
+    );
+
+    const Cog = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/><path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path d="M12 2v2"/><path d="M12 22v-2"/><path d="m17 20.66-1-1.73"/><path d="M11 10.27 7 3.34"/><path d="m20.66 17-1.73-1"/><path d="m3.34 7 1.73 1"/><path d="M14 12h8"/><path d="M2 12h2"/><path d="m20.66 7-1.73 1"/><path d="m3.34 17 1.73-1"/><path d="m17 3.34-1 1.73"/><path d="m11 13.73-4 6.93"/>
+      </svg>
+    );
+
+    const Brain = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M8.5 18a4 4 0 0 1-1.5-3"/><path d="M15.5 18a4 4 0 0 0 1.5-3"/>
+      </svg>
+    );
+
+    const Zap = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+      </svg>
+    );
+
+    const CheckCircle = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+      </svg>
+    );
+
+    const XCircle = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+      </svg>
+    );
+
+    const Lightbulb = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>
+      </svg>
+    );
+
+    const ArrowRight = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+      </svg>
+    );
+
+    const RotateCcw = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+      </svg>
+    );
+
+    const User = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/>
+      </svg>
+    );
+
+    const FileText = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>
+      </svg>
+    );
+
+    const Wrench = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      </svg>
+    );
+
+    const Play = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+      </svg>
+    );
+
+    const Pause = ({ size = 24, className = "" }) => (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+      </svg>
+    );
+
+    const scenarios = [
+      {
+        id: 1,
+        title: "Email Sorting",
+        description: "A company wants to automatically sort incoming emails into folders (Support, Sales, Marketing, Spam).",
+        traditional: {
+          approach: "Rule-based filters: IF contains 'unsubscribe' → Spam, IF from @sales-domain → Sales",
+          pros: ["Fast execution", "Predictable results", "No AI costs", "Easy to debug"],
+          cons: ["Breaks with new patterns", "Can't understand context", "Needs constant rule updates"]
+        },
+        agentic: {
+          approach: "AI reads email content, understands intent, considers sender history, and categorizes intelligently",
+          pros: ["Handles edge cases", "Learns patterns", "Understands nuance", "Adapts over time"],
+          cons: ["Higher cost per email", "Occasional surprises", "Needs monitoring"]
+        },
+        bestChoice: "traditional",
+        explanation: "For high-volume, straightforward categorization with clear rules, traditional software is more cost-effective and predictable. Agentic AI would be overkill here."
+      },
+      {
+        id: 2,
+        title: "Customer Support Agent",
+        description: "Handle complex customer inquiries that require understanding context, accessing multiple systems, and making decisions.",
+        traditional: {
+          approach: "Decision tree chatbot with pre-scripted responses and button choices",
+          pros: ["Consistent responses", "Easy to audit", "No hallucinations", "Predictable costs"],
+          cons: ["Frustrating dead-ends", "Can't handle novel questions", "Rigid conversation flow"]
+        },
+        agentic: {
+          approach: "AI agent that understands the question, searches knowledge bases, accesses order history, and crafts personalized responses",
+          pros: ["Natural conversation", "Handles complexity", "Can take actions", "Improves satisfaction"],
+          cons: ["Needs guardrails", "Higher per-interaction cost", "Requires oversight"]
+        },
+        bestChoice: "agentic",
+        explanation: "Complex support requires understanding context, accessing multiple data sources, and adapting responses. An agentic approach excels here where rigid scripts fail."
+      },
+      {
+        id: 3,
+        title: "Invoice Processing",
+        description: "Extract data from invoices in various formats and enter them into an accounting system.",
+        traditional: {
+          approach: "OCR with template matching for known invoice formats, manual review for unknowns",
+          pros: ["High accuracy for known formats", "Fast processing", "Auditable"],
+          cons: ["Fails on new formats", "High manual review rate", "Template maintenance burden"]
+        },
+        agentic: {
+          approach: "AI understands invoice semantics, extracts fields regardless of layout, validates against business rules, and flags anomalies",
+          pros: ["Format-agnostic", "Handles variations", "Learns new vendors", "Catches errors humans miss"],
+          cons: ["Needs validation layer", "Higher compute cost", "Occasional misreads"]
+        },
+        bestChoice: "agentic",
+        explanation: "Invoice formats vary wildly. Agentic AI's ability to understand document semantics rather than relying on fixed templates makes it superior for this task."
+      },
+      {
+        id: 4,
+        title: "Traffic Light Control",
+        description: "Manage traffic light timing at a busy intersection.",
+        traditional: {
+          approach: "Sensor-triggered timing algorithms with predefined cycles based on traffic studies",
+          pros: ["Millisecond precision", "Never 'thinks' wrong", "Proven reliability", "No latency"],
+          cons: ["Can't adapt to unusual events", "Optimization is manual", "Static patterns"]
+        },
+        agentic: {
+          approach: "AI analyzes real-time traffic, predicts patterns, and dynamically adjusts timing",
+          pros: ["Adapts to events", "Optimizes flow", "Learns patterns"],
+          cons: ["Latency concerns", "Edge case risks", "Overkill for simple intersections"]
+        },
+        bestChoice: "traditional",
+        explanation: "Safety-critical real-time systems need deterministic behavior. The risk of AI 'reasoning' incorrectly about traffic lights isn't worth the marginal optimization gains."
+      },
+      {
+        id: 5,
+        title: "Research Assistant",
+        description: "Help a researcher gather information, synthesize findings, and draft a literature review.",
+        traditional: {
+          approach: "Database search tools with filters, citation managers, and document templates",
+          pros: ["Precise queries", "No hallucinations", "Direct source access"],
+          cons: ["Manual synthesis", "No insight generation", "Time-consuming"]
+        },
+        agentic: {
+          approach: "AI searches databases, reads papers, identifies themes, synthesizes findings, and drafts coherent summaries with citations",
+          pros: ["Massive time savings", "Cross-paper insights", "Iterative refinement", "Draft generation"],
+          cons: ["Needs fact-checking", "May miss niche sources", "Citation verification required"]
+        },
+        bestChoice: "agentic",
+        explanation: "Research synthesis requires understanding, connecting ideas across sources, and generating new insights—exactly what agentic AI excels at."
+      }
+    ];
+
+    const quizQuestions = [
+      {
+        question: "What's the KEY difference between traditional software and agentic AI?",
+        options: [
+          "Agentic AI uses more computing power",
+          "Traditional software follows explicit rules; agentic AI reasons and makes decisions",
+          "Agentic AI is always more accurate",
+          "Traditional software can't handle user input"
+        ],
+        correct: 1,
+        explanation: "Traditional software executes predefined logic. Agentic AI can reason about novel situations, make judgment calls, and adapt its approach—like having a thoughtful assistant vs. a rigid machine."
+      },
+      {
+        question: "When should you choose TRADITIONAL software over agentic AI?",
+        options: [
+          "When the task requires creativity",
+          "When you need consistent, predictable, and fast execution of well-defined rules",
+          "When handling complex user queries",
+          "When processing unstructured data"
+        ],
+        correct: 1,
+        explanation: "Traditional software shines when rules are clear, speed matters, and predictability is paramount. Don't use a thinking AI when a simple algorithm suffices!"
+      },
+      {
+        question: "Which characteristic is UNIQUE to agentic AI?",
+        options: [
+          "Processing data quickly",
+          "Storing information in databases",
+          "Autonomously deciding HOW to accomplish a goal, not just following steps",
+          "Displaying information to users"
+        ],
+        correct: 2,
+        explanation: "Agentic AI's superpower is autonomy in approach. Given a goal, it figures out the steps—it doesn't just execute predefined ones. It can adapt, retry, and choose different strategies."
+      },
+      {
+        question: "A bank wants to detect fraud. Which hybrid approach makes most sense?",
+        options: [
+          "Use only AI for everything",
+          "Use only traditional rules",
+          "Traditional rules for obvious fraud patterns + AI for subtle/novel fraud detection",
+          "Let customers decide which system reviews their transactions"
+        ],
+        correct: 2,
+        explanation: "The best systems combine both: fast rule-based filters catch known patterns instantly, while AI analyzes edge cases and detects novel fraud that rules would miss."
+      },
+      {
+        question: "What's the biggest risk of OVERUSING agentic AI?",
+        options: [
+          "It's too reliable",
+          "Unnecessary cost, latency, and unpredictability for tasks that don't need reasoning",
+          "Users will become too happy",
+          "It's too easy to debug"
+        ],
+        correct: 1,
+        explanation: "Using AI where simple code suffices is like hiring a consultant to flip a light switch. You pay more, wait longer, and might get a philosophical discussion about lighting instead."
+      }
+    ];
+
+    // Architecture flow steps
+    const architectureSteps = [
+      {
+        id: 1,
+        title: "User Query",
+        description: "User sends a natural language request",
+        example: '"Book me a flight to Paris for next weekend"',
+        highlight: ["user", "query"]
+      },
+      {
+        id: 2,
+        title: "Query Received",
+        description: "Orchestrator receives the raw query",
+        example: "Query logged and prepared for processing",
+        highlight: ["query", "orchestrator"]
+      },
+      {
+        id: 3,
+        title: "Context Assembly",
+        description: "System prompt with instructions and available tools is attached",
+        example: "Tools available: flight_search, calendar_check, booking_api",
+        highlight: ["system-prompt", "orchestrator"]
+      },
+      {
+        id: 4,
+        title: "LLM Request",
+        description: "Combined query + context sent to the language model",
+        example: "Full prompt with user intent + tool descriptions",
+        highlight: ["orchestrator", "llm"]
+      },
+      {
+        id: 5,
+        title: "LLM Reasoning",
+        description: "LLM analyzes request and suggests which tool to use",
+        example: '"I need to use flight_search with params: destination=Paris, date=next_weekend"',
+        highlight: ["llm"]
+      },
+      {
+        id: 6,
+        title: "Tool Execution",
+        description: "Orchestrator executes the suggested tool",
+        example: "Calling flight_search API with parameters...",
+        highlight: ["orchestrator", "tool1"]
+      },
+      {
+        id: 7,
+        title: "Tool Result",
+        description: "Tool returns data back to orchestrator",
+        example: "Found 12 flights, prices range €150-€400",
+        highlight: ["tool1", "orchestrator"]
+      },
+      {
+        id: 8,
+        title: "Result to LLM",
+        description: "Tool results sent back to LLM for interpretation",
+        example: "LLM receives flight options to analyze",
+        highlight: ["orchestrator", "llm"]
+      },
+      {
+        id: 9,
+        title: "Final Response",
+        description: "LLM crafts a helpful, natural language response",
+        example: '"I found great options! The best deal is..."',
+        highlight: ["llm", "orchestrator"]
+      },
+      {
+        id: 10,
+        title: "User Receives Answer",
+        description: "Final response delivered to user",
+        example: "User sees formatted flight recommendations",
+        highlight: ["orchestrator", "user"]
+      }
+    ];
+
+    function AgenticAITutorial() {
+      const [currentSection, setCurrentSection] = useState(0);
+      const [scenarioAnswers, setScenarioAnswers] = useState({});
+      const [quizAnswers, setQuizAnswers] = useState({});
+      const [showQuizResults, setShowQuizResults] = useState(false);
+      const [expandedScenario, setExpandedScenario] = useState(null);
+      const [archStep, setArchStep] = useState(0);
+      const [isPlaying, setIsPlaying] = useState(false);
+
+      const sections = ['intro', 'comparison', 'scenarios', 'decision', 'architecture', 'quiz', 'summary'];
+
+      // Auto-play architecture animation
+      useEffect(() => {
+        let interval;
+        if (isPlaying && currentSection === 4) {
+          interval = setInterval(() => {
+            setArchStep(prev => {
+              if (prev >= architectureSteps.length - 1) {
+                setIsPlaying(false);
+                return prev;
+              }
+              return prev + 1;
+            });
+          }, 2000);
+        }
+        return () => clearInterval(interval);
+      }, [isPlaying, currentSection]);
+
+      const handleScenarioAnswer = (scenarioId, answer) => {
+        setScenarioAnswers(prev => ({ ...prev, [scenarioId]: answer }));
+      };
+
+      const handleQuizAnswer = (questionIndex, answerIndex) => {
+        setQuizAnswers(prev => ({ ...prev, [questionIndex]: answerIndex }));
+      };
+
+      const getQuizScore = () => {
+        return quizQuestions.reduce((score, q, i) => 
+          quizAnswers[i] === q.correct ? score + 1 : score, 0
+        );
+      };
+
+      const resetQuiz = () => {
+        setQuizAnswers({});
+        setShowQuizResults(false);
+      };
+
+      const NavButton = ({ direction, onClick, disabled }) => (
+        <button
+          onClick={onClick}
+          disabled={disabled}
+          className={`flex items-center gap-2 px-5 py-3 rounded-full font-medium transition-all duration-300 ${
+            disabled 
+              ? 'bg-stone-800 text-stone-600 cursor-not-allowed' 
+              : 'bg-gradient-to-r from-amber-500 to-orange-500 text-stone-900 hover:shadow-lg hover:shadow-amber-500/25 hover:scale-105'
+          }`}
+        >
+          {direction === 'prev' && <ChevronLeft size={20} />}
+          {direction === 'prev' ? 'Back' : 'Continue'}
+          {direction === 'next' && <ChevronRight size={20} />}
+        </button>
+      );
+
+      const ProgressBar = () => (
+        <div className="flex gap-2 justify-center mb-8">
+          {sections.map((_, i) => (
+            <div
+              key={i}
+              className={`h-2 rounded-full transition-all duration-500 ${
+                i === currentSection 
+                  ? 'w-8 bg-gradient-to-r from-amber-400 to-orange-500' 
+                  : i < currentSection 
+                    ? 'w-4 bg-amber-500/50' 
+                    : 'w-4 bg-stone-700'
+              }`}
+            />
+          ))}
+        </div>
+      );
+
+      // Section: Introduction
+      const IntroSection = () => (
+        <div className="space-y-8 animate-fadeIn">
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30 mb-4">
+              <Brain className="text-amber-400" size={40} />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-200 via-orange-200 to-amber-200 bg-clip-text text-transparent">
+              Understanding Agentic AI
+            </h1>
+            <p className="text-xl text-stone-400 max-w-2xl mx-auto">
+              When to use intelligent agents vs. traditional software
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 mt-12">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-stone-800/50 to-stone-900/50 border border-stone-700/50 hover:border-blue-500/30 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-blue-500/20">
+                  <Cog className="text-blue-400" size={24} />
+                </div>
+                <h3 className="text-xl font-semibold text-blue-300">Traditional Software</h3>
+              </div>
+              <p className="text-stone-400 leading-relaxed">
+                Follows <span className="text-blue-300 font-medium">explicit instructions</span>. 
+                Like a recipe: "IF this, THEN that." Predictable, fast, and reliable for well-defined tasks.
+              </p>
+              <div className="mt-4 p-3 rounded-lg bg-stone-900/50 font-mono text-sm text-stone-500">
+                if (email.contains("unsubscribe"))<br/>
+                &nbsp;&nbsp;moveToSpam();
+              </div>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-stone-800/50 to-stone-900/50 border border-stone-700/50 hover:border-amber-500/30 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-amber-500/20">
+                  <Bot className="text-amber-400" size={24} />
+                </div>
+                <h3 className="text-xl font-semibold text-amber-300">Agentic AI</h3>
+              </div>
+              <p className="text-stone-400 leading-relaxed">
+                <span className="text-amber-300 font-medium">Reasons about goals</span> and decides how to achieve them. 
+                Like a thoughtful assistant who understands intent, not just instructions.
+              </p>
+              <div className="mt-4 p-3 rounded-lg bg-stone-900/50 text-sm text-stone-500 italic">
+                "Hmm, this looks like a newsletter but the user has engaged with this sender before. I'll keep it in inbox but lower priority."
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 mt-8">
+            <div className="flex items-start gap-4">
+              <Lightbulb className="text-amber-400 flex-shrink-0 mt-1" size={24} />
+              <div>
+                <h4 className="font-semibold text-amber-200 mb-2">The Key Insight</h4>
+                <p className="text-stone-300">
+                  Agentic AI isn't "better" than traditional software—it's a <span className="text-amber-300">different tool for different problems</span>. 
+                  Using AI where simple code suffices is like using a chainsaw to cut butter. This tutorial will help you know which tool to reach for.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      // Section: Comparison
+      const ComparisonSection = () => (
+        <div className="space-y-8 animate-fadeIn">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-stone-100">
+              Traditional vs. Agentic: A Deep Dive
+            </h2>
+            <p className="text-stone-400 max-w-2xl mx-auto">
+              Understanding the fundamental differences in how each approach works
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-2xl border border-stone-700/50">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-stone-800/50">
+                  <th className="p-4 text-left text-stone-400 font-medium">Aspect</th>
+                  <th className="p-4 text-left text-blue-300 font-medium">
+                    <div className="flex items-center gap-2">
+                      <Cog size={18} /> Traditional
+                    </div>
+                  </th>
+                  <th className="p-4 text-left text-amber-300 font-medium">
+                    <div className="flex items-center gap-2">
+                      <Bot size={18} /> Agentic AI
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-stone-800">
+                {[
+                  {
+                    aspect: "How it works",
+                    traditional: "Executes predefined logic step-by-step",
+                    agentic: "Reasons about goals, plans approach, adapts"
+                  },
+                  {
+                    aspect: "Handling unknowns",
+                    traditional: "Fails or returns error",
+                    agentic: "Attempts to reason through novel situations"
+                  },
+                  {
+                    aspect: "Predictability",
+                    traditional: "100% deterministic (same input → same output)",
+                    agentic: "Probabilistic (may vary responses)"
+                  },
+                  {
+                    aspect: "Speed",
+                    traditional: "Milliseconds",
+                    agentic: "Seconds to minutes"
+                  },
+                  {
+                    aspect: "Cost per operation",
+                    traditional: "Fractions of a cent",
+                    agentic: "Cents to dollars"
+                  },
+                  {
+                    aspect: "Best for",
+                    traditional: "Clear rules, high volume, speed-critical",
+                    agentic: "Ambiguity, reasoning, complex decisions"
+                  }
+                ].map((row, i) => (
+                  <tr key={i} className="hover:bg-stone-800/30 transition-colors">
+                    <td className="p-4 text-stone-300 font-medium">{row.aspect}</td>
+                    <td className="p-4 text-stone-400">{row.traditional}</td>
+                    <td className="p-4 text-stone-400">{row.agentic}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4 mt-8">
+            <div className="p-5 rounded-xl bg-stone-800/30 border border-blue-500/20 hover:border-blue-500/40 transition-all">
+              <Zap className="text-blue-400 mb-3" size={24} />
+              <h4 className="font-semibold text-stone-200 mb-2">Speed vs. Intelligence</h4>
+              <p className="text-sm text-stone-400">Traditional wins on speed. Agentic wins on adaptability. Choose based on what matters more.</p>
+            </div>
+            <div className="p-5 rounded-xl bg-stone-800/30 border border-green-500/20 hover:border-green-500/40 transition-all">
+              <CheckCircle className="text-green-400 mb-3" size={24} />
+              <h4 className="font-semibold text-stone-200 mb-2">Predictability vs. Flexibility</h4>
+              <p className="text-sm text-stone-400">Need exact same output every time? Go traditional. Need to handle edge cases gracefully? Consider agentic.</p>
+            </div>
+            <div className="p-5 rounded-xl bg-stone-800/30 border border-amber-500/20 hover:border-amber-500/40 transition-all">
+              <Brain className="text-amber-400 mb-3" size={24} />
+              <h4 className="font-semibold text-stone-200 mb-2">Rules vs. Reasoning</h4>
+              <p className="text-sm text-stone-400">If you can write clear rules, traditional works. If the 'rules' are really 'judgment calls,' agentic shines.</p>
+            </div>
+          </div>
+        </div>
+      );
+
+      // Section: Interactive Scenarios
+      const ScenariosSection = () => (
+        <div className="space-y-8 animate-fadeIn">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-stone-100">
+              🎯 Decision Practice
+            </h2>
+            <p className="text-stone-400 max-w-2xl mx-auto">
+              For each scenario, decide: Traditional Software or Agentic AI? Click to reveal the answer and explanation.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {scenarios.map((scenario) => (
+              <div 
+                key={scenario.id}
+                className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                  expandedScenario === scenario.id 
+                    ? 'border-amber-500/50 bg-stone-800/50' 
+                    : 'border-stone-700/50 bg-stone-900/30 hover:border-stone-600'
+                }`}
+              >
+                <div 
+                  className="p-5 cursor-pointer"
+                  onClick={() => setExpandedScenario(expandedScenario === scenario.id ? null : scenario.id)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-medium text-amber-400 bg-amber-500/10 px-2 py-1 rounded">
+                        Scenario {scenario.id}
+                      </span>
+                      <h3 className="text-xl font-semibold text-stone-200 mt-2">{scenario.title}</h3>
+                      <p className="text-stone-400 mt-1">{scenario.description}</p>
+                    </div>
+                    <ChevronRight 
+                      className={`text-stone-500 transition-transform duration-300 flex-shrink-0 ml-4 ${
+                        expandedScenario === scenario.id ? 'rotate-90' : ''
+                      }`} 
+                      size={24} 
+                    />
+                  </div>
+
+                  {!scenarioAnswers[scenario.id] && expandedScenario === scenario.id && (
+                    <div className="flex gap-3 mt-4">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleScenarioAnswer(scenario.id, 'traditional'); }}
+                        className="flex-1 py-3 px-4 rounded-xl bg-blue-500/20 border border-blue-500/30 text-blue-300 font-medium hover:bg-blue-500/30 transition-all flex items-center justify-center gap-2"
+                      >
+                        <Cog size={18} /> Traditional
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleScenarioAnswer(scenario.id, 'agentic'); }}
+                        className="flex-1 py-3 px-4 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-300 font-medium hover:bg-amber-500/30 transition-all flex items-center justify-center gap-2"
+                      >
+                        <Bot size={18} /> Agentic AI
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {scenarioAnswers[scenario.id] && expandedScenario === scenario.id && (
+                  <div className="px-5 pb-5 space-y-4 animate-fadeIn">
+                    <div className={`p-4 rounded-xl ${
+                      scenarioAnswers[scenario.id] === scenario.bestChoice 
+                        ? 'bg-green-500/10 border border-green-500/30' 
+                        : 'bg-orange-500/10 border border-orange-500/30'
+                    }`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        {scenarioAnswers[scenario.id] === scenario.bestChoice 
+                          ? <CheckCircle className="text-green-400" size={20} />
+                          : <XCircle className="text-orange-400" size={20} />
+                        }
+                        <span className={`font-semibold ${
+                          scenarioAnswers[scenario.id] === scenario.bestChoice 
+                            ? 'text-green-300' 
+                            : 'text-orange-300'
+                        }`}>
+                          {scenarioAnswers[scenario.id] === scenario.bestChoice ? 'Correct!' : 'Not quite!'}
+                        </span>
+                      </div>
+                      <p className="text-stone-300">
+                        Best choice: <span className={`font-semibold ${scenario.bestChoice === 'traditional' ? 'text-blue-300' : 'text-amber-300'}`}>
+                          {scenario.bestChoice === 'traditional' ? 'Traditional Software' : 'Agentic AI'}
+                        </span>
+                      </p>
+                      <p className="text-stone-400 mt-2 text-sm">{scenario.explanation}</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/20">
+                        <h4 className="font-semibold text-blue-300 mb-2 flex items-center gap-2">
+                          <Cog size={16} /> Traditional Approach
+                        </h4>
+                        <p className="text-sm text-stone-400 mb-3">{scenario.traditional.approach}</p>
+                        <div className="space-y-1">
+                          {scenario.traditional.pros.map((pro, i) => (
+                            <div key={i} className="text-xs text-green-400/80 flex items-center gap-1">
+                              <span>+</span> {pro}
+                            </div>
+                          ))}
+                          {scenario.traditional.cons.map((con, i) => (
+                            <div key={i} className="text-xs text-red-400/80 flex items-center gap-1">
+                              <span>−</span> {con}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20">
+                        <h4 className="font-semibold text-amber-300 mb-2 flex items-center gap-2">
+                          <Bot size={16} /> Agentic Approach
+                        </h4>
+                        <p className="text-sm text-stone-400 mb-3">{scenario.agentic.approach}</p>
+                        <div className="space-y-1">
+                          {scenario.agentic.pros.map((pro, i) => (
+                            <div key={i} className="text-xs text-green-400/80 flex items-center gap-1">
+                              <span>+</span> {pro}
+                            </div>
+                          ))}
+                          {scenario.agentic.cons.map((con, i) => (
+                            <div key={i} className="text-xs text-red-400/80 flex items-center gap-1">
+                              <span>−</span> {con}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+      // Section: Decision Framework
+      const DecisionSection = () => (
+        <div className="space-y-8 animate-fadeIn">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-stone-100">
+              🧭 Decision Framework
+            </h2>
+            <p className="text-stone-400 max-w-2xl mx-auto">
+              Use these questions to decide which approach fits your problem
+            </p>
+          </div>
+
+          <div className="relative p-8 rounded-2xl bg-gradient-to-br from-stone-800/50 to-stone-900/50 border border-stone-700/50">
+            <div className="space-y-6">
+              {[
+                {
+                  question: "Can you write clear, exhaustive rules for all cases?",
+                  yes: "Traditional ✓",
+                  no: "Consider Agentic"
+                },
+                {
+                  question: "Is speed (< 100ms) critical?",
+                  yes: "Traditional ✓",
+                  no: "Agentic is viable"
+                },
+                {
+                  question: "Does the task require understanding natural language or context?",
+                  yes: "Agentic ✓",
+                  no: "Traditional may suffice"
+                },
+                {
+                  question: "Must the output be 100% predictable every time?",
+                  yes: "Traditional ✓",
+                  no: "Agentic is viable"
+                },
+                {
+                  question: "Does the task involve multi-step reasoning or decisions?",
+                  yes: "Agentic ✓",
+                  no: "Traditional may suffice"
+                }
+              ].map((item, i) => (
+                <div key={i} className="flex flex-col md:flex-row md:items-center gap-4 p-4 rounded-xl bg-stone-900/50">
+                  <div className="flex-1">
+                    <span className="text-stone-300 font-medium">{item.question}</span>
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
+                    <span className="px-3 py-1 rounded-lg text-sm font-medium bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                      Yes → {item.yes}
+                    </span>
+                    <span className="px-3 py-1 rounded-lg text-sm font-medium bg-stone-500/20 text-stone-300 border border-stone-500/30">
+                      No → {item.no}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+            <h4 className="font-semibold text-purple-200 mb-3 flex items-center gap-2">
+              <Zap size={20} /> Pro Tip: The Hybrid Approach
+            </h4>
+            <p className="text-stone-300">
+              The best systems often combine both approaches: <span className="text-blue-300">Traditional software</span> handles the 80% of cases that are straightforward, 
+              while <span className="text-amber-300">Agentic AI</span> tackles the complex 20% that needs reasoning. This gives you speed, reliability, AND intelligence.
+            </p>
+          </div>
+        </div>
+      );
+
+      // Section: Architecture (NEW)
+      const ArchitectureSection = () => {
+        const currentStepData = architectureSteps[archStep];
+        const isHighlighted = (id) => currentStepData.highlight.includes(id);
+
+        return (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="text-center space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-stone-100">
+                🏗️ How Agentic AI Works
+              </h2>
+              <p className="text-stone-400 max-w-2xl mx-auto">
+                Step through the architecture to see how queries flow through an AI agent system
+              </p>
+            </div>
+
+            {/* Architecture Diagram */}
+            <div className="relative p-4 md:p-8 rounded-2xl bg-gradient-to-br from-stone-900 to-stone-950 border border-stone-700/50 overflow-hidden">
+              
+              {/* Main container with responsive layout */}
+              <div className="flex flex-col lg:flex-row gap-6 items-center lg:items-start">
+                
+                {/* Left side: User */}
+                <div className="flex flex-col items-center gap-4">
+                  <div className={`p-4 rounded-2xl border-2 transition-all duration-500 ${
+                    isHighlighted('user') 
+                      ? 'bg-emerald-500/20 border-emerald-400 shadow-lg shadow-emerald-500/20' 
+                      : 'bg-stone-800/50 border-stone-700'
+                  }`}>
+                    <User size={40} className={isHighlighted('user') ? 'text-emerald-400' : 'text-stone-500'} />
+                  </div>
+                  <span className="text-sm font-medium text-stone-400">User</span>
+                </div>
+
+                {/* Arrow to query */}
+                <div className="hidden lg:flex items-center">
+                  <div className={`text-2xl ${isHighlighted('user') && isHighlighted('query') ? 'text-emerald-400 flow-right' : 'text-stone-700'}`}>
+                    →
+                  </div>
+                </div>
+
+                {/* Query box */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className={`px-6 py-3 rounded-xl border-2 transition-all duration-500 ${
+                    isHighlighted('query') 
+                      ? 'bg-cyan-500/20 border-cyan-400 shadow-lg shadow-cyan-500/20' 
+                      : 'bg-stone-800/50 border-stone-700'
+                  }`}>
+                    <span className={`font-mono text-sm ${isHighlighted('query') ? 'text-cyan-300' : 'text-stone-500'}`}>
+                      "query"
+                    </span>
+                  </div>
+                </div>
+
+                {/* Arrow to orchestrator */}
+                <div className="hidden lg:flex items-center">
+                  <div className={`text-2xl ${isHighlighted('query') && isHighlighted('orchestrator') ? 'text-cyan-400 flow-right' : 'text-stone-700'}`}>
+                    →
+                  </div>
+                </div>
+
+                {/* Main Agent Box */}
+                <div className={`flex-1 max-w-2xl p-6 rounded-2xl border-2 transition-all duration-500 ${
+                  isHighlighted('orchestrator') 
+                    ? 'bg-amber-500/10 border-amber-500/50 shadow-lg shadow-amber-500/10' 
+                    : 'bg-stone-800/30 border-stone-700'
+                }`}>
+                  <div className="text-center mb-4">
+                    <span className={`text-lg font-semibold ${isHighlighted('orchestrator') ? 'text-amber-300' : 'text-stone-400'}`}>
+                      AI Agent
+                    </span>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* System Prompt */}
+                    <div className={`p-4 rounded-xl border transition-all duration-500 ${
+                      isHighlighted('system-prompt') 
+                        ? 'bg-violet-500/20 border-violet-400' 
+                        : 'bg-stone-900/50 border-stone-700'
+                    }`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <FileText size={16} className={isHighlighted('system-prompt') ? 'text-violet-400' : 'text-stone-500'} />
+                        <span className={`text-sm font-medium ${isHighlighted('system-prompt') ? 'text-violet-300' : 'text-stone-500'}`}>
+                          System Prompt
+                        </span>
+                      </div>
+                      <div className="text-xs text-stone-500 space-y-1">
+                        <div>• Instructions</div>
+                        <div>• Available tools:</div>
+                        <div className="pl-2 text-stone-600">tool 1, tool 2</div>
+                      </div>
+                    </div>
+
+                    {/* Orchestrator */}
+                    <div className={`p-4 rounded-xl border transition-all duration-500 ${
+                      isHighlighted('orchestrator') 
+                        ? 'bg-amber-500/20 border-amber-400' 
+                        : 'bg-stone-900/50 border-stone-700'
+                    }`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Bot size={16} className={isHighlighted('orchestrator') ? 'text-amber-400' : 'text-stone-500'} />
+                        <span className={`text-sm font-medium ${isHighlighted('orchestrator') ? 'text-amber-300' : 'text-stone-500'}`}>
+                          Orchestrator
+                        </span>
+                      </div>
+                      <div className="text-xs text-stone-500">
+                        Coordinates flow between LLM and tools
+                      </div>
+                    </div>
+
+                    {/* LLM */}
+                    <div className={`p-4 rounded-xl border transition-all duration-500 ${
+                      isHighlighted('llm') 
+                        ? 'bg-pink-500/20 border-pink-400' 
+                        : 'bg-stone-900/50 border-stone-700'
+                    }`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Brain size={16} className={isHighlighted('llm') ? 'text-pink-400' : 'text-stone-500'} />
+                        <span className={`text-sm font-medium ${isHighlighted('llm') ? 'text-pink-300' : 'text-stone-500'}`}>
+                          LLM
+                        </span>
+                      </div>
+                      <div className="text-xs text-stone-500">
+                        Reasons & decides which tool to use
+                      </div>
+                    </div>
+
+                    {/* Tools */}
+                    <div className="p-4 rounded-xl bg-stone-900/50 border border-stone-700">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Wrench size={16} className="text-stone-500" />
+                        <span className="text-sm font-medium text-stone-500">Tools</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className={`px-3 py-2 rounded-lg border text-xs transition-all duration-500 ${
+                          isHighlighted('tool1') 
+                            ? 'bg-teal-500/20 border-teal-400 text-teal-300' 
+                            : 'bg-stone-800 border-stone-700 text-stone-500'
+                        }`}>
+                          Tool 1
+                        </div>
+                        <div className={`px-3 py-2 rounded-lg border text-xs transition-all duration-500 ${
+                          isHighlighted('tool2') 
+                            ? 'bg-teal-500/20 border-teal-400 text-teal-300' 
+                            : 'bg-stone-800 border-stone-700 text-stone-500'
+                        }`}>
+                          Tool 2
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Flow arrows inside agent */}
+                  <div className="mt-4 flex justify-center gap-2 text-xs text-stone-600">
+                    <span>Query → LLM → Tool → LLM → Response</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step indicator */}
+              <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/30">
+                <span className="text-amber-400 text-sm font-medium">Step {archStep + 1}/10</span>
+              </div>
+            </div>
+
+            {/* Step explanation card */}
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-stone-800/50 to-stone-900/50 border border-stone-700/50">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
+                  <span className="text-amber-400 font-bold">{currentStepData.id}</span>
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-lg font-semibold text-stone-200 mb-1">{currentStepData.title}</h4>
+                  <p className="text-stone-400 mb-3">{currentStepData.description}</p>
+                  <div className="p-3 rounded-lg bg-stone-900/50 border border-stone-700/50">
+                    <span className="text-sm font-mono text-amber-300">{currentStepData.example}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setArchStep(Math.max(0, archStep - 1))}
+                  disabled={archStep === 0}
+                  className={`px-4 py-2 rounded-lg transition-all ${
+                    archStep === 0 
+                      ? 'bg-stone-800 text-stone-600 cursor-not-allowed' 
+                      : 'bg-stone-700 text-stone-300 hover:bg-stone-600'
+                  }`}
+                >
+                  ← Previous
+                </button>
+                <button
+                  onClick={() => {
+                    if (isPlaying) {
+                      setIsPlaying(false);
+                    } else {
+                      setArchStep(0);
+                      setIsPlaying(true);
+                    }
+                  }}
+                  className="px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:bg-amber-500/30 transition-all flex items-center gap-2"
+                >
+                  {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+                  {isPlaying ? 'Pause' : 'Auto Play'}
+                </button>
+                <button
+                  onClick={() => setArchStep(Math.min(architectureSteps.length - 1, archStep + 1))}
+                  disabled={archStep === architectureSteps.length - 1}
+                  className={`px-4 py-2 rounded-lg transition-all ${
+                    archStep === architectureSteps.length - 1 
+                      ? 'bg-stone-800 text-stone-600 cursor-not-allowed' 
+                      : 'bg-stone-700 text-stone-300 hover:bg-stone-600'
+                  }`}
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+
+            {/* Step progress dots */}
+            <div className="flex justify-center gap-2">
+              {architectureSteps.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setArchStep(i); setIsPlaying(false); }}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    i === archStep 
+                      ? 'bg-amber-400 scale-125' 
+                      : i < archStep 
+                        ? 'bg-amber-500/50' 
+                        : 'bg-stone-700 hover:bg-stone-600'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Key takeaways */}
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+              <h4 className="font-semibold text-purple-200 mb-3 flex items-center gap-2">
+                <Lightbulb size={20} /> Key Takeaways
+              </h4>
+              <div className="grid md:grid-cols-2 gap-4 text-sm text-stone-300">
+                <div className="flex items-start gap-2">
+                  <span className="text-purple-400">•</span>
+                  <span><strong className="text-purple-300">Orchestrator</strong> is the brain that coordinates everything</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-purple-400">•</span>
+                  <span><strong className="text-purple-300">LLM</strong> reasons about WHAT to do, not just follows rules</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-purple-400">•</span>
+                  <span><strong className="text-purple-300">Tools</strong> extend capabilities (APIs, databases, search)</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-purple-400">•</span>
+                  <span><strong className="text-purple-300">Loop</strong> continues until the task is complete</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // Section: Quiz
+      const QuizSection = () => (
+        <div className="space-y-8 animate-fadeIn">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-stone-100">
+              🎓 Knowledge Check
+            </h2>
+            <p className="text-stone-400 max-w-2xl mx-auto">
+              Test your understanding with these questions
+            </p>
+          </div>
+
+          {!showQuizResults ? (
+            <div className="space-y-6">
+              {quizQuestions.map((q, qIndex) => (
+                <div key={qIndex} className="p-6 rounded-2xl bg-stone-800/30 border border-stone-700/50">
+                  <h4 className="font-semibold text-stone-200 mb-4">
+                    <span className="text-amber-400">{qIndex + 1}.</span> {q.question}
+                  </h4>
+                  <div className="space-y-2">
+                    {q.options.map((option, oIndex) => (
+                      <button
+                        key={oIndex}
+                        onClick={() => handleQuizAnswer(qIndex, oIndex)}
+                        className={`w-full text-left p-4 rounded-xl transition-all duration-200 ${
+                          quizAnswers[qIndex] === oIndex
+                            ? 'bg-amber-500/20 border-2 border-amber-500/50 text-amber-200'
+                            : 'bg-stone-900/50 border border-stone-700/50 text-stone-300 hover:border-stone-600'
+                        }`}
+                      >
+                        <span className="text-stone-500 mr-2">{String.fromCharCode(65 + oIndex)}.</span>
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setShowQuizResults(true)}
+                  disabled={Object.keys(quizAnswers).length < quizQuestions.length}
+                  className={`px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 ${
+                    Object.keys(quizAnswers).length < quizQuestions.length
+                      ? 'bg-stone-800 text-stone-600 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-amber-500 to-orange-500 text-stone-900 hover:shadow-lg hover:shadow-amber-500/25'
+                  }`}
+                >
+                  Submit Answers ({Object.keys(quizAnswers).length}/{quizQuestions.length})
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/30">
+                <div className="text-6xl font-bold text-amber-400 mb-2">
+                  {getQuizScore()}/{quizQuestions.length}
+                </div>
+                <p className="text-stone-300 text-lg">
+                  {getQuizScore() === quizQuestions.length ? "🎉 Perfect! You've mastered the concepts!" :
+                   getQuizScore() >= 3 ? "👏 Great job! You understand the key differences." :
+                   "📚 Review the material and try again!"}
+                </p>
+              </div>
+
+              {quizQuestions.map((q, qIndex) => (
+                <div key={qIndex} className={`p-5 rounded-xl border ${
+                  quizAnswers[qIndex] === q.correct 
+                    ? 'bg-green-500/5 border-green-500/30' 
+                    : 'bg-red-500/5 border-red-500/30'
+                }`}>
+                  <div className="flex items-start gap-3">
+                    {quizAnswers[qIndex] === q.correct 
+                      ? <CheckCircle className="text-green-400 flex-shrink-0" size={24} />
+                      : <XCircle className="text-red-400 flex-shrink-0" size={24} />
+                    }
+                    <div>
+                      <h4 className="font-medium text-stone-200">{q.question}</h4>
+                      <p className="text-sm text-stone-400 mt-1">
+                        Your answer: <span className={quizAnswers[qIndex] === q.correct ? 'text-green-300' : 'text-red-300'}>
+                          {q.options[quizAnswers[qIndex]]}
+                        </span>
+                      </p>
+                      {quizAnswers[qIndex] !== q.correct && (
+                        <p className="text-sm text-green-400 mt-1">
+                          Correct: {q.options[q.correct]}
+                        </p>
+                      )}
+                      <p className="text-sm text-stone-500 mt-2 italic">{q.explanation}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <div className="flex justify-center">
+                <button
+                  onClick={resetQuiz}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-stone-800 text-stone-300 hover:bg-stone-700 transition-all"
+                >
+                  <RotateCcw size={18} /> Try Again
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      // Section: Summary
+      const SummarySection = () => (
+        <div className="space-y-8 animate-fadeIn">
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 mb-4">
+              <CheckCircle className="text-green-400" size={40} />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-stone-100">
+              You're Ready! 🚀
+            </h2>
+            <p className="text-stone-400 max-w-2xl mx-auto">
+              Here's your quick reference guide
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="p-6 rounded-2xl bg-blue-500/10 border border-blue-500/30">
+              <h3 className="text-xl font-semibold text-blue-300 mb-4 flex items-center gap-2">
+                <Cog size={24} /> Choose Traditional When...
+              </h3>
+              <ul className="space-y-3 text-stone-300">
+                {[
+                  "Rules are clear and exhaustive",
+                  "Speed is critical (real-time systems)",
+                  "Output must be 100% deterministic",
+                  "Processing high volumes at low cost",
+                  "The task is simple and well-defined"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <ArrowRight className="text-blue-400 flex-shrink-0 mt-1" size={16} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/30">
+              <h3 className="text-xl font-semibold text-amber-300 mb-4 flex items-center gap-2">
+                <Bot size={24} /> Choose Agentic AI When...
+              </h3>
+              <ul className="space-y-3 text-stone-300">
+                {[
+                  "Task requires understanding and reasoning",
+                  "Inputs are unstructured or unpredictable",
+                  "Handling edge cases gracefully matters",
+                  "Multi-step decisions are needed",
+                  "Context and nuance affect outcomes"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <ArrowRight className="text-amber-400 flex-shrink-0 mt-1" size={16} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-amber-500/10 border border-purple-500/20">
+            <h4 className="font-semibold text-purple-200 mb-3">💡 Final Wisdom</h4>
+            <p className="text-stone-300 leading-relaxed">
+              The future isn't "traditional OR agentic"—it's knowing when to use each. 
+              The best engineers use <span className="text-blue-300">traditional software</span> as the reliable foundation 
+              and <span className="text-amber-300">agentic AI</span> for the complex, creative, and adaptive layers. 
+              Master both, and you'll build systems that are fast, reliable, AND intelligent.
+            </p>
+          </div>
+        </div>
+      );
+
+      const renderSection = () => {
+        switch(sections[currentSection]) {
+          case 'intro': return <IntroSection />;
+          case 'comparison': return <ComparisonSection />;
+          case 'scenarios': return <ScenariosSection />;
+          case 'decision': return <DecisionSection />;
+          case 'architecture': return <ArchitectureSection />;
+          case 'quiz': return <QuizSection />;
+          case 'summary': return <SummarySection />;
+          default: return <IntroSection />;
+        }
+      };
+
+      return (
+        <div className="min-h-screen bg-stone-950 text-stone-100">
+          <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
+            <ProgressBar />
+            
+            <div className="mb-12">
+              {renderSection()}
+            </div>
+
+            <div className="flex justify-between items-center pt-6 border-t border-stone-800">
+              <NavButton 
+                direction="prev" 
+                onClick={() => setCurrentSection(prev => prev - 1)}
+                disabled={currentSection === 0}
+              />
+              <span className="text-stone-500 text-sm">
+                {currentSection + 1} of {sections.length}
+              </span>
+              <NavButton 
+                direction="next" 
+                onClick={() => setCurrentSection(prev => prev + 1)}
+                disabled={currentSection === sections.length - 1}
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<AgenticAITutorial />, document.getElementById('root'));
+  </script>
+</body>
+</html>
